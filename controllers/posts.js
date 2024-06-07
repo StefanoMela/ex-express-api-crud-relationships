@@ -10,13 +10,8 @@ const index = async (req, res) => {
         let where = {}; // Definisci un oggetto per i filtri
 
         // Verifica se sono presenti filtri nella query string
-        const { published, category, content, page = 1, limit = 5 } = req.query;
-        if (published) {
-            where.published = published === 'true'; // Converte la stringa in booleano
-        }
-        if (category) {
-            where.categoryId = parseInt(category); // Assicurati che category sia un numero
-        }
+        const { content, page = 1, limit = 5 } = req.query;
+
         if (content) {
             // Applica il filtro per il contenuto del post
             where.content = {
@@ -112,9 +107,27 @@ const create = async (req, res) => {
 const update = async (req, res) => {
     try {
         const { slug } = req.params;
+        const { title, image, content, categoryId, tags } = req.body;
+
+        const data = {
+            title,
+            slug: createSlug(title),
+            image,
+            content,
+            published: req.body.published ? true : false,
+            tags: {
+                set:
+                    tags ? tags.map(id => ({ id })) : []
+            }
+        };
+
+        if (categoryId) {
+            data.categoryId = categoryId;
+        }
+
         const post = await prisma.post.update({
             where: { slug: slug },
-            data: req.body
+            data
         });
         res.json(post)
     }

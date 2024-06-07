@@ -13,7 +13,7 @@ const bodyData = {
             bail: true,
         },
         isString: {
-            errorMessage: 'Name deve essere una stringa.',
+            errorMessage: 'Il titolo deve essere una stringa.',
             bail: true
         },
     },
@@ -81,7 +81,7 @@ const bodyData = {
                 if (notIntegerId) {
                     throw new Error(`Uno o più ID non sono dei numeri interi.`);
                 }
-                const tags = await prisma.tags.findMany({
+                const tags = await prisma.tag.findMany({
                     where: { id: { in: ids } }
                 });
                 if (tags.length !== ids.length) {
